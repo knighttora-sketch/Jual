@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TokoKita Premium</title>
+    
+    <!-- Font & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        /* --- CSS --- */
+        :root {
+            --bg-body: #f8f9fa;
+            --bg-card: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --border: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --radius: 12px;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #111827;
+            --bg-card: #1f2937;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --border: #374151;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; transition: background 0.3s, color 0.3s; }
+        body { background-color: var(--bg-body); color: var(--text-main); padding-bottom: 80px; }
+        a { text-decoration: none; color: inherit; }
+        img { max-width: 100%; display: block; }
+        button { cursor: pointer; border: none; font-family: inherit; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
+
+        header {
+            background: var(--bg-card);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-wrapper { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.5rem; font-weight: 700; color: var(--primary); text-decoration: none; }
+        
+        .search-wrapper {
+            flex: 1;
+            max-width: 400px;
+            margin: 0 2rem;
+            position: relative;
+            display: none;
+        }
+        .search-input {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: var(--bg-body);
+            color: var(--text-main);
+            outline: none;
+        }
+        .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+
+        .nav-actions { display: flex; align-items: center; gap: 15px; }
+        .icon-btn { background: none; font-size: 1.5rem; color: var(--text-main); padding: 5px; position: relative; }
+        .badge {
+            position: absolute; top: 0; right: 0; background: var(--primary); color: white;
+            font-size: 0.7rem; width: 18px; height: 18px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-weight: bold;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--primary) 0%, #8b5cf6 100%);
+            color: white;
+            padding: 3rem 1rem;
+            text-align: center;
+            border-radius: 0 0 30px 30px;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+        .hero h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+
+        .categories { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 2rem; scrollbar-width: none; }
+        .categories::-webkit-scrollbar { display: none; }
+        .chip {
+            padding: 8px 16px; border-radius: 20px; white-space: nowrap; font-size: 0.9rem;
+            background: var(--bg-card); border: 1px solid var(--border); cursor: pointer; font-weight: 500;
+        }
+        .chip.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+        .mobile-search { display: block; padding: 0 1rem 1rem 1rem; }
+        .mobile-search input {
+            width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border);
+            background: var(--bg-card); color: var(--text-main);
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 1rem;
+            padding-bottom: 2rem;
+        }
+        @media (min-width: 768px) {
+            .product-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 2rem; }
+            .search-wrapper { display: block; }
+            .mobile-search { display: none; }
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            position: relative;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        .card:hover { transform: translateY(-5px); border-color: var(--primary); }
+        .card-img { width: 100%; height: 180px; object-fit: cover; background: #eee; }
+        .card-body { padding: 1rem; }
+        .card-title { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-price { color: var(--primary); font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem; }
+        .btn-quick-add {
+            width: 100%; padding: 8px; background: var(--bg-body); color: var(--text-main);
+            border: 1px solid var(--border); border-radius: 8px; font-weight: 600;
+        }
+        .btn-quick-add:hover { background: var(--primary); color: white; border-color: var(--primary); }
+
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 300;
+            display: none; align-items: center; justify-content: center; padding: 1rem;
+            backdrop-filter: blur(5px);
+        }
+        .modal-overlay.open { display: flex; }
+        .modal-content {
+            background: var(--bg-card); width: 100%; max-width: 800px; border-radius: var(--radius);
+            overflow: hidden; position: relative; max-height: 90vh; overflow-y: auto;
+            animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .modal-grid { display: grid; grid-template-columns: 1fr; }
+        @media(min-width: 768px) { .modal-grid { grid-template-columns: 1fr 1fr; } }
+        .modal-img { width: 100%; height: 300px; object-fit: cover; }
+        @media(min-width: 768px) { .modal-img { height: 100%; } }
+        .modal-details { padding: 2rem; }
+        .modal-close { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.1); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+
+        .cart-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 400;
+            display: none; justify-content: flex-end;
+        }
+        .cart-overlay.open { display: flex; }
+        .cart-sidebar {
+            width: 100%; max-width: 400px; background: var(--bg-card); height: 100%;
+            display: flex; flex-direction: column; box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+        }
+        .cart-items { flex: 1; overflow-y: auto; padding: 1.5rem; }
+        .cart-item { display: flex; gap: 1rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; }
+        .cart-item img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; }
+        
+        /* Control Qty Baru */
+        .cart-controls { display: flex; align-items: center; gap: 10px; margin-top: 5px; }
+        .qty-btn { 
+            width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(--border); 
+            background: var(--bg-body); color: var(--text-main); font-weight: bold; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; font-size: 1rem;
+        }
+        .qty-btn:hover { background: #e5e7eb; }
+
+        .btn-primary {
+            background: var(--primary); color: white; padding: 12px 20px; border-radius: 10px; font-weight: 600; width: 100%; text-align: center;
+        }
+        .btn-wa { background: #25D366; color: white; display: inline-flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; margin-top: 1rem; }
+
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%; background: var(--bg-card);
+            border-top: 1px solid var(--border); display: flex; justify-content: space-around;
+            padding: 10px 0; z-index: 90; display: none;
+        }
+        .bottom-nav-item { display: flex; flex-direction: column; align-items: center; font-size: 0.75rem; color: var(--text-muted); gap: 3px; }
+        .bottom-nav-item.active { color: var(--primary); }
+        @media(max-width: 768px) { .bottom-nav { display: flex; } body { padding-bottom: 70px; } }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container nav-wrapper">
+            <a href="#" class="logo">TokoKita.</a>
+            
+            <div class="search-wrapper">
+                <i class="ph ph-magnifying-glass search-icon"></i>
+                <input type="text" class="search-input" placeholder="Cari produk..." oninput="filterProducts(this.value)">
+            </div>
+
+            <div class="nav-actions">
+                <button class="icon-btn" onclick="toggleTheme()" title="Dark Mode">
+                    <i class="ph ph-moon" id="themeIcon"></i>
+                </button>
+                <button class="icon-btn" onclick="toggleCart()">
+                    <i class="ph ph-shopping-cart"></i>
+                    <span class="badge" id="cartCount">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Search -->
+    <div class="mobile-search">
+        <input type="text" placeholder="Cari apa hari ini?" oninput="filterProducts(this.value)">
+    </div>
+
+    <main class="container">
+        <!-- Hero -->
+        <section class="hero">
+            <h1>Toko Akiwot</h1>
+            <p>Koleksi eksklusif dengan harga spesial</p>
+        </section>
+
+        <!-- Categories -->
+        <div class="categories" id="categoryContainer">
+            <button class="chip active" onclick="filterCategory('all')">Semua</button>
+        </div>
+
+        <!-- Products -->
+        <div class="product-grid" id="productGrid">
+            <div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: var(--text-muted);">
+                Memuat data dari Database...
+            </div>
+        </div>
+    </main>
+
+    <!-- Detail Modal -->
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeDetail()">&times;</button>
+            <div class="modal-grid">
+                <img src="" id="detailImg" class="modal-img">
+                <div class="modal-details">
+                    <h2 id="detailName" style="font-size:1.5rem; margin-bottom:0.5rem;">Nama Produk</h2>
+                    <h3 id="detailPrice" style="color:var(--primary); font-size:1.5rem; margin-bottom:1rem;">Rp 0</h3>
+                    <p id="detailDesc" style="color:var(--text-muted); margin-bottom:2rem;">Deskripsi lengkap produk ada di sini.</p>
+                    
+                    <div style="display:flex; gap:10px;">
+                        <button class="btn-primary" onclick="addToCartFromDetail()">+ Keranjang</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-overlay" id="cartOverlay">
+        <div class="cart-sidebar">
+            <div style="padding:1.5rem; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+                <h3>Keranjang</h3>
+                <button onclick="toggleCart()" style="background:none; font-size:1.5rem;">&times;</button>
+            </div>
+            <div class="cart-items" id="cartItems"></div>
+            <div style="padding:1.5rem; border-top:1px solid var(--border); background:var(--bg-body);">
+                <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:1.2rem; margin-bottom:1rem;">
+                    <span>Total:</span><span id="cartTotal">Rp 0</span>
+                </div>
+                <button class="btn-primary" onclick="openCheckout()">Checkout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div class="modal-overlay" id="checkoutModal">
+        <div class="modal-content" style="max-width:500px;">
+            <button class="modal-close" onclick="closeCheckout()">&times;</button>
+            <div style="padding:2rem;">
+                <h2 style="margin-bottom:1.5rem;">Checkout</h2>
+                
+                <form id="orderForm" onsubmit="handleOrder(event)">
+                    <div style="margin-bottom:1rem;">
+                        <label style="font-size:0.9rem; font-weight:600;">Nama Lengkap</label>
+                        <input type="text" id="custName" class="search-input" style="border-radius:8px;" required>
+                    </div>
+                    <div style="margin-bottom:1rem;">
+                        <label style="font-size:0.9rem; font-weight:600;">No WhatsApp</label>
+                        <input type="tel" id="custPhone" class="search-input" style="border-radius:8px;" required>
+                    </div>
+                    <div style="margin-bottom:1rem;">
+                        <label style="font-size:0.9rem; font-weight:600;">Alamat</label>
+                        <input type="text" id="custAddress" class="search-input" style="border-radius:8px;" required>
+                    </div>
+
+                    <label style="font-size:0.9rem; font-weight:600; display:block; margin-bottom:5px;">Metode Bayar</label>
+                    <div style="border:1px solid var(--border); padding:10px; border-radius:8px; margin-bottom:10px; cursor:pointer;" onclick="selectPay('qris', 'QRIS')">
+                        <input type="radio" name="pay" id="payQris"> <label for="payQris">QRIS (Scan)</label>
+                        <div id="viewQris" style="display:none; margin-top:5px;"><img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=PAYMENT" style="width:100px;"></div>
+                    </div>
+                    <div style="border:1px solid var(--border); padding:10px; border-radius:8px; margin-bottom:20px; cursor:pointer;" onclick="selectPay('bank', 'Transfer')">
+                        <input type="radio" name="pay" id="payBank"> <label for="payBank">Transfer Bank (BCA/DANA)</label>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Proses Pesanan</button>
+                </form>
+
+                <div id="loadView" style="display:none; text-align:center; padding:2rem;">
+                    <div style="border:4px solid #eee; border-top:4px solid var(--primary); width:40px; height:40px; border-radius:50%; animation:spin 1s infinite; margin:0 auto 1rem;"></div>
+                    <p>Mengirim pesanan...</p>
+                </div>
+
+                <div id="successView" style="display:none; text-align:center;">
+                    <div style="font-size:3rem;">✅</div>
+                    <h3>Berhasil!</h3>
+                    <p style="color:var(--text-muted); font-size:0.9rem;">Cek Email Admin & Kirim Bukti WA</p>
+                    <a href="#" id="waLink" class="btn-primary btn-wa" target="_blank">
+                        <i class="ph ph-whatsapp-logo" style="font-size:1.2rem;"></i> Kirim Bukti
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="bottom-nav-item active" onclick="window.scrollTo(0,0)">
+            <i class="ph ph-house" style="font-size:1.5rem;"></i>
+            <span>Home</span>
+        </div>
+        <div class="bottom-nav-item" onclick="toggleCart()">
+            <i class="ph ph-shopping-cart" style="font-size:1.5rem;"></i>
+            <span>Cart</span>
+        </div>
+    </div>
+
+    <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
+
+    <!-- LOGIC SCRIPT -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDXKeIOlD8r0xNM61pzh82og0DBQvlnxEk",
+            authDomain: "fire-me-a2f00.firebaseapp.com",
+            databaseURL: "https://fire-me-a2f00-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "fire-me-a2f00",
+            storageBucket: "fire-me-a2f00.firebasestorage.app",
+            messagingSenderId: "1010150322376",
+            appId: "1:1010150322376:web:625ab284498f3e2bea75fd",
+            measurementId: "G-T2ZFHHPT5N"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        window.allProducts = []; 
+        window.allCategories = [];
+
+        // Load Kategori
+        onValue(ref(db, 'categories'), (snapshot) => {
+            const container = document.getElementById('categoryContainer');
+            while (container.children.length > 1) {
+                container.removeChild(container.lastChild);
+            }
+            if (snapshot.exists()) {
+                const cats = Object.values(snapshot.val()).map(c => c.name);
+                window.allCategories = cats;
+                cats.forEach(catName => {
+                    const btn = document.createElement('button');
+                    btn.className = 'chip';
+                    btn.innerText = catName.charAt(0).toUpperCase() + catName.slice(1);
+                    btn.onclick = () => window.filterCategory(catName);
+                    container.appendChild(btn);
+                });
+            }
+        });
+
+        // Load Produk
+        onValue(ref(db, 'products'), (snapshot) => {
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = '';
+            window.allProducts = []; 
+
+            if (!snapshot.exists()) {
+                grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:2rem;">Belum ada produk.</div>';
+                return;
+            }
+
+            snapshot.forEach((childSnapshot) => {
+                const data = childSnapshot.val();
+                data.id = childSnapshot.key;
+                window.allProducts.push(data);
+            });
+
+            window.renderProducts(window.allProducts);
+        });
+
+        window.formatRupiah = (num) => "Rp " + num.toLocaleString('id-ID');
+
+        window.renderProducts = (list) => {
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = list.map(p => `
+                <div class="card" onclick="openDetail('${p.id}')">
+                    <img src="${p.imageUrl}" class="card-img" onerror="this.src='https://via.placeholder.com/200'">
+                    <div class="card-body">
+                        <div style="font-size:0.7rem; text-transform:uppercase; color:var(--primary); margin-bottom:5px;">${p.category}</div>
+                        <div class="card-title">${p.name}</div>
+                        <div class="card-price">${window.formatRupiah(p.price)}</div>
+                        <button class="btn-quick-add" onclick="event.stopPropagation(); window.addToCart('${p.id}')">+ Keranjang</button>
+                    </div>
+                </div>
+            `).join('');
+        };
+
+        window.filterCategory = (cat) => {
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if(cat === 'all') window.renderProducts(window.allProducts);
+            else window.renderProducts(window.allProducts.filter(p => p.category === cat));
+        };
+
+        window.filterProducts = (keyword) => {
+            keyword = keyword.toLowerCase();
+            const filtered = window.allProducts.filter(p => p.name.toLowerCase().includes(keyword));
+            window.renderProducts(filtered);
+        };
+
+    </script>
+
+    <!-- CART & CHECKOUT SCRIPT -->
+    <script>
+        emailjs.init("16r4SQoMxpaUBZUzF"); 
+        const SERVICE_ID = "service_sqpll1s";
+        const TEMPLATE_ID = "template_jsf6l9v";
+        const ADMIN_WA = "6281234567890";
+
+        let cart = [];
+        let currentDetailId = null;
+        let selectedPayment = "";
+
+        window.openDetail = (id) => {
+            const p = window.allProducts.find(x => x.id === id);
+            if(!p) return;
+            currentDetailId = id;
+            document.getElementById('detailImg').src = p.imageUrl;
+            document.getElementById('detailName').innerText = p.name;
+            document.getElementById('detailPrice').innerText = window.formatRupiah(p.price);
+            document.getElementById('detailDesc').innerText = p.desc || "Tidak ada deskripsi.";
+            document.getElementById('detailModal').classList.add('open');
+        };
+
+        window.closeDetail = () => document.getElementById('detailModal').classList.remove('open');
+
+        window.addToCartFromDetail = () => {
+            window.addToCart(currentDetailId);
+            closeDetail();
+        };
+
+        window.addToCart = (id) => {
+            const p = window.allProducts.find(x => x.id === id);
+            if(!p) return;
+
+            const exist = cart.find(x => x.id === id);
+            if(exist) {
+                exist.qty++;
+            } else {
+                cart.push({...p, qty:1});
+            }
+            updateCart();
+            showToast("Masuk keranjang");
+        };
+
+        // FUNGSI BARU: UPDATE QTY & HAPUS
+        window.changeQty = (id, delta) => {
+            const item = cart.find(x => x.id === id);
+            if(!item) return;
+
+            item.qty += delta;
+
+            if (item.qty <= 0) {
+                // Jika jumlah 0, hapus dari array
+                cart = cart.filter(x => x.id !== id);
+            }
+            updateCart();
+        };
+
+        window.updateCart = () => {
+            const total = cart.reduce((a,b) => a + (b.price * b.qty), 0);
+            const count = cart.reduce((a,b) => a + b.qty, 0);
+            document.getElementById('cartCount').innerText = count;
+            document.getElementById('cartTotal').innerText = window.formatRupiah(total);
+
+            const list = document.getElementById('cartItems');
+            if(cart.length === 0) {
+                list.innerHTML = '<p style="text-align:center; color:#999; padding-top:20px;">Keranjang kosong</p>';
+            } else {
+                list.innerHTML = cart.map(item => `
+                    <div class="cart-item">
+                        <img src="${item.imageUrl}">
+                        <div style="flex:1;">
+                            <div style="font-weight:600;">${item.name}</div>
+                            <div style="font-size:0.9rem; color:var(--text-muted); margin-bottom:5px;">${window.formatRupiah(item.price)}</div>
+                            
+                            <!-- Tombol Kontrol Qty -->
+                            <div class="cart-controls">
+                                <button class="qty-btn" onclick="changeQty('${item.id}', -1)">-</button>
+                                <span>${item.qty}</span>
+                                <button class="qty-btn" onclick="changeQty('${item.id}', 1)">+</button>
+                            </div>
+                        </div>
+                        <div style="font-weight:bold; text-align:right;">
+                            <div>${window.formatRupiah(item.price * item.qty)}</div>
+                            <button onclick="changeQty('${item.id}', -${item.qty})" style="color:red; font-size:0.8rem; margin-top:5px; background:none; text-decoration:underline;">Hapus</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        };
+
+        window.toggleCart = () => document.getElementById('cartOverlay').classList.toggle('open');
+
+        window.toggleTheme = () => {
+            const body = document.body;
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            document.getElementById('themeIcon').className = isDark ? 'ph ph-moon' : 'ph ph-sun';
+        };
+
+        window.openCheckout = () => {
+            if(!cart.length) return alert("Keranjang kosong");
+            toggleCart();
+            document.getElementById('checkoutModal').classList.add('open');
+            document.getElementById('orderForm').style.display = 'block';
+            document.getElementById('loadView').style.display = 'none';
+            document.getElementById('successView').style.display = 'none';
+        };
+        window.closeCheckout = () => document.getElementById('checkoutModal').classList.remove('open');
+
+        window.selectPay = (type, name) => {
+            selectedPayment = name;
+            document.getElementById('payQris').checked = (type === 'qris');
+            document.getElementById('payBank').checked = (type === 'bank');
+            document.getElementById('viewQris').style.display = (type === 'qris') ? 'block' : 'none';
+        };
+
+        window.handleOrder = (e) => {
+            e.preventDefault();
+            if(!selectedPayment) return alert("Pilih metode pembayaran!");
+
+            document.getElementById('orderForm').style.display = 'none';
+            document.getElementById('loadView').style.display = 'block';
+
+            const name = document.getElementById('custName').value;
+            const phone = document.getElementById('custPhone').value;
+            const address = document.getElementById('custAddress').value;
+            const total = document.getElementById('cartTotal').innerText;
+            let items = cart.map(i => `- ${i.name} (${i.qty}x) : ${window.formatRupiah(i.price*i.qty)}`).join('\n');
+
+            const params = {
+                to_name: "Admin TokoKita",
+                from_name: name,
+                customer_phone: phone,
+                customer_address: address,
+                message: items + `\nTotal: ${total}\nMetode: ${selectedPayment}`
+            };
+
+            emailjs.send(SERVICE_ID, TEMPLATE_ID, params)
+                .then(() => showSuccess(name, phone, address, items, total, selectedPayment))
+                .catch((err) => {
+                    console.error(err);
+                    showSuccess(name, phone, address, items, total, selectedPayment);
+                });
+        };
+
+        window.showSuccess = (name, phone, address, items, total, method) => {
+            document.getElementById('loadView').style.display = 'none';
+            document.getElementById('successView').style.display = 'block';
+
+            let waText = `Halo Admin, saya ${name} pesan.%0A%0A${items.replace(/\n/g, '%0A')}%0A%0ATotal: ${total}%0AMetode: ${method}%0AAlamat: ${address}.%0A%0ABukti bayar:`;
+            document.getElementById('waLink').href = `https://wa.me/${ADMIN_WA}?text=${waText}`;
+        };
+
+        window.showToast = (msg) => {
+            const t = document.createElement('div');
+            t.style.cssText = "position:fixed; bottom:80px; left:50%; transform:translateX(-50%); background:#333; color:white; padding:10px 20px; border-radius:20px; z-index:999; font-size:0.8rem;";
+            t.innerText = msg;
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 2000);
+        };
+    </script>
+</body>
+</html>
