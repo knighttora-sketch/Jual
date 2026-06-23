@@ -294,6 +294,120 @@
 
         /* ===== DATA STREAM DECORATION ===== */
         .data-stream { position: fixed; top: 0; width: 1px; background: linear-gradient(180deg, transparent, var(--primary), transparent); z-index: 1; pointer-events: none; opacity: 0.3; }
+
+        /* ============================================= */
+        /* ===== [TAMBAHAN] FAZBEAR INFO STRIP ===== */
+        /* ============================================= */
+        .fazbear-strip {
+            background: rgba(0, 0, 0, 0.6);
+            border-bottom: 1px solid rgba(0, 255, 65, 0.3);
+            padding: 6px 1rem;
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--primary);
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 99;
+            backdrop-filter: blur(5px);
+        }
+        .fazbear-strip a {
+            color: var(--primary);
+            text-shadow: 0 0 8px rgba(0,255,65,0.4);
+            transition: all 0.2s;
+        }
+        .fazbear-strip a:hover {
+            text-shadow: var(--glow-primary);
+            color: #fff;
+        }
+        .fazbear-strip .status-dot {
+            display: inline-block;
+            width: 6px; height: 6px;
+            background: #25D366;
+            border-radius: 50%;
+            margin-right: 6px;
+            animation: flicker 2s infinite;
+            box-shadow: 0 0 6px #25D366;
+            vertical-align: middle;
+        }
+        .fazbear-strip .sep {
+            color: var(--accent);
+            margin: 0 8px;
+            opacity: 0.6;
+        }
+
+        /* ===== [TAMBAHAN] FAZBEAR HERO BADGE ===== */
+        .fazbear-hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 12px;
+            padding: 6px 16px;
+            border: 1px solid rgba(37, 211, 102, 0.5);
+            background: rgba(37, 211, 102, 0.08);
+            border-radius: var(--radius);
+            font-size: 0.8rem;
+            color: #25D366;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        .fazbear-hero-badge:hover {
+            background: rgba(37, 211, 102, 0.15);
+            border-color: #25D366;
+            box-shadow: 0 0 15px rgba(37, 211, 102, 0.3);
+            color: #fff;
+        }
+        .fazbear-hero-badge .pulse-dot {
+            width: 8px; height: 8px;
+            background: #25D366;
+            border-radius: 50%;
+            animation: flicker 1.5s infinite;
+            box-shadow: 0 0 8px #25D366;
+        }
+
+        /* ===== [TAMBAHAN] FLOATING WA BUTTON ===== */
+        .fazbear-float {
+            position: fixed;
+            bottom: 85px;
+            right: 16px;
+            z-index: 95;
+            width: 52px; height: 52px;
+            background: #25D366;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.6rem;
+            box-shadow: 0 0 15px rgba(37,211,102,0.4), 0 4px 15px rgba(0,0,0,0.5);
+            transition: all 0.3s;
+            text-decoration: none;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .fazbear-float:hover {
+            transform: scale(1.1) translateY(-2px);
+            box-shadow: 0 0 25px rgba(37,211,102,0.6), 0 6px 20px rgba(0,0,0,0.6);
+            background: #20bd5a;
+        }
+        .fazbear-float .float-notif {
+            position: absolute;
+            top: -4px; right: -4px;
+            width: 18px; height: 18px;
+            background: var(--accent);
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            font-weight: bold;
+            box-shadow: var(--glow-accent);
+            animation: flicker 2s infinite;
+        }
+        @media (min-width: 769px) {
+            .fazbear-float { bottom: 24px; right: 24px; border-radius: var(--radius); }
+        }
     </style>
 </head>
 <body>
@@ -325,6 +439,18 @@
         </div>
     </header>
 
+    <!-- ============================================= -->
+    <!-- ===== [TAMBAHAN] FAZBEAR INFO STRIP ===== -->
+    <!-- ============================================= -->
+    <div class="fazbear-strip">
+        <span class="status-dot"></span>
+        NAMA: <a href="https://wa.me/628598789022" target="_blank">Fazbear</a>
+        <span class="sep">//</span>
+        WA: <a href="https://wa.me/628598789022" target="_blank">+628598789022</a>
+        <span class="sep">//</span>
+        STATUS: OPEN JOKI — HUBUNGI WHATSAPP
+    </div>
+
     <div class="mobile-search">
         <input type="text" placeholder="> search_query..." oninput="filterProducts(this.value)">
     </div>
@@ -332,19 +458,21 @@
     <main class="container">
         <!-- Hero -->
         <section class="hero" id="heroSection">
-            <!-- 
-                ==========================================
-                GANTI TEKS "PASTE_LINK_GIF_DISINI" DI BAWAH 
-                DENGAN URL GIF ANDA DARI GOOGLE/WEB
-                ==========================================
-            -->
             <div class="hero-gif-layer" style="background-image: url('https://media3.giphy.com/media/v1.Y2lkPTZjMDliOTUyc3JwbjdoNW5mcjFtaTFtaDBkbmRpZW85dm1iYXR5aWllMnJtM3NqYSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/z2D26GunfUK1W/giphy.gif');"></div>
             
             <div class="hero-overlay-gif"></div>
             
             <div class="hero-content">
                 <h1 data-text="Toko Akiwot">Toko Akiwot</h1>
-                <p>// koleksi_eksklusif.hack</p>
+                <p>// Jual Items // Codes // Dan Open Joki</p>
+
+                <!-- ============================================= -->
+                <!-- ===== [TAMBAHAN] FAZBEAR HERO BADGE ===== -->
+                <!-- ============================================= -->
+                <a href="https://wa.me/628598789022?text=Halo%20Fazbear%2C%20saya%20tertarik%20joki" target="_blank" class="fazbear-hero-badge">
+                    <span class="pulse-dot"></span>
+                    OPEN JOKI — CHAT SEKARANG
+                </a>
             </div>
         </section>
 
@@ -445,6 +573,14 @@
             <i class="ph ph-shopping-cart" style="font-size:1.5rem;"></i><span>CART</span>
         </div>
     </div>
+
+    <!-- ============================================= -->
+    <!-- ===== [TAMBAHAN] FLOATING WA BUTTON ===== -->
+    <!-- ============================================= -->
+    <a href="https://wa.me/628598789022?text=Halo%20Fazbear%2C%20saya%20mau%20order%20joki" target="_blank" class="fazbear-float" title="Chat Fazbear">
+        <i class="ph ph-whatsapp-logo"></i>
+        <span class="float-notif">!</span>
+    </a>
 
     <script>
         const canvas = document.getElementById('matrixCanvas');
